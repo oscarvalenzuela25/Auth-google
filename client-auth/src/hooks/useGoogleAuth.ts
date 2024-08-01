@@ -69,7 +69,8 @@ const useGoogleAuth = ({ redirectAfterLogin }: Props = {}) => {
   const verifyAccessToken = async () => {
     if (user && tokenData) {
       const currentDate = moment();
-      const isValidToken = currentDate.isBefore(tokenData.expiry_date);
+      const expiryDate = moment(tokenData?.expiry_date || 0);
+      const isValidToken = currentDate.isBefore(expiryDate);
       if (isValidToken) {
         setAxiosAuthToken(tokenData.access_token);
         return true;

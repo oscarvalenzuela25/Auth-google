@@ -10,10 +10,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
   const queryClient = new QueryClient();
+  const clientId = import.meta.env.VITE_CLIENT_ID || '';
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId="648664263695-8m3urt50bk9ni96p2knj150h6r257v0p.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={clientId}>
         <BrowserRouter>
           <Switch>
             <Route path="/login" component={privateLoginAuth(Login)} />
