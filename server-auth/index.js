@@ -17,18 +17,50 @@ const oAuth2Client = new OAuth2Client(clientId, clientSecret, 'postmessage');
 // No tendra middleware de autenticacion
 app.post('/auth/google', async (req, res) => {
   const { tokens } = await oAuth2Client.getToken(req.body.code); // exchange code for tokens
-  console.log('Tokens');
-  console.log(tokens);
+  // tokens
+  // {
+  //   access_token: string;
+  //   refresh_token: string;
+  //   scope: string;
+  //   token_type: string;
+  //   id_token: string;
+  //   expiry_date: number;
+  // }
   const accessTokenInfo = await oAuth2Client.getTokenInfo(tokens.access_token); // validate access token
-  console.log('accessTokenInfo');
-  console.log(accessTokenInfo);
+  // accessTokenInfo
+  // {
+  //   accessTokenInfo: {
+  //     expiry_date: number;
+  //     scopes: string [];
+  //     azp: string;
+  //     aud: string;
+  //     sub: string;
+  //     exp: string;
+  //     email: string;
+  //     email_verified: string;
+  //     access_type: string;
+  //   },
+  // };
   const verifyToken = await oAuth2Client.verifyIdToken({
     idToken: tokens.id_token,
     audience: clientId,
-  }); // verify id token
+  });
   const userData = verifyToken.getPayload();
-  console.log('verifyToken');
-  console.log(verifyToken);
+  // {
+  //   iss: string;
+  //   azp: string;
+  //   aud: string;
+  //   sub: string;
+  //   email: string;
+  //   email_verified: boolean;
+  //   at_hash: string;
+  //   name: string;
+  //   picture: string;
+  //   given_name: string;
+  //   family_name: string;
+  //   iat: number;
+  //   exp: number;
+  // };
   res.json({
     access_token: tokens.access_token,
     refresh_token: tokens.refresh_token,
@@ -46,12 +78,20 @@ app.post('/auth/google/refresh-token', async (req, res) => {
     clientSecret,
     req.body.refresh_token
   );
-  const { tokens } = await user.refreshAccessToken(); // optain new tokens
+  const { credentials } = await user.refreshAccessToken(); // optain new tokens
+  // {
+  //   access_token: string;
+  //   scope: string;
+  //   token_type: string;
+  //   id_token: string;
+  //   expiry_date: number,
+  //   refresh_token: string;
+  // };
 
   res.json({
-    access_token: tokens?.access_token,
-    refresh_token: tokens?.refresh_token,
-    expiry_date: tokens?.expiry_date,
+    access_token: credentials?.access_token,
+    refresh_token: credentials?.refresh_token,
+    expiry_date: credentials?.expiry_date,
   });
 });
 
